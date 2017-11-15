@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "packages <- c('flexclust')\nif (length(setdiff(packages, rownames(installed.packages()))) > 0) {\n  install.packages(setdiff(packages, rownames(installed.packages())))  \n}\nlibrary(flexclust)\n\nrgb2Num <- function(data) {\n  # Maps RGB colors to a single value.\n  result <- sapply(1:nrow(data), function(row) {\n    color <- data[row,]\n    (color$red * 256 * 256) + (color$green * 256) + color$blue\n  })\n  \n  result\n}\n\ngenerateColors <- function(n) {\n  # Generate a set of random colors.\n  colors <- as.data.frame(t(sapply(1:n, function(i) {\n    parts <- sample(0:255, 3)\n    c(red = parts[1], green = parts[2], blue = parts[3], hex = rgb(parts[1], parts[2], parts[3], maxColorValue = 255))\n  })), stringsAsFactors = F)\n\n  # Convert to numeric values.\n  colors$red <- as.numeric(colors$red)\n  colors$green <- as.numeric(colors$green)\n  colors$blue <- as.numeric(colors$blue)\n  \n  # Map each color to an x/y-coordinate for easy plotting.\n  colors$x <- 1:nrow(colors)\n  colors$y <- rgb2Num(colors)\n\n  colors\n}\n\npredictColor <- function(model, centroids, data) {\n  # Predict the assigned color by mapping the color to a cluster.\n  data$group <- predict(model, newdata=data[,1:3])\n  \n  # Assign the label of the cluster.\n  data$label <- sapply(1:nrow(data), function(row) {\n    centroids[centroids$group == data[row, 'group'], ]$label\n  })\n  \n  data\n}\n\n# Initialize a random seed for reproducibility.\nset.seed(1234)\n\n# Generate a set of random colors.\ntrain <- generateColors(100)\n\n# Plot the colors - the more data, the more apparent the gradient will be.\nplot(x=train$x, y=train$y, col=train$hex, pch=19, cex=2, main='Colors', xlab='', ylab='2D Color', yaxt='n', xaxt='n')\n\n# Run kmeans clustering on the data.\nfit <- kmeans(train[,1:3], 3, nstart = 20)\ntrain$group <- fit$cluster\n\n# Convert centroid rgb values for plotting (align x to center of plot).\ncentroids <- as.data.frame(list(x = nrow(train) / 2, y = rgb2Num(as.data.frame(fit$centers)), group = 1:nrow(fit$centers)))\n\n# Get red/green/blue for which cooresponds to which centroid.\ncentroids$label <- colnames(fit$centers)[apply(fit$centers, 1, which.max)]\n\n# Plot the centroids on the graph.\npoints(x=centroids$x, y=centroids$y, cex=4, pch=4, lwd=3, col=centroids$label)\n\n# Plot group number next to each centroid.\ntext(x=centroids$x, y=centroids$y, labels=centroids$group, cex=1, pos=3, font=2)\n\n# Plot assigned group next to each point.\ntext(x=1:nrow(train), y=train$y, labels=train$group, cex=0.7, pos=3)\n\n# Plot data, this time with the cluster, mapping each color to a group.\nplot(x=train$x, y=train$group, col=train$hex, pch=19, cex=2, main='Colors', xlab='', ylab='2D Color', yaxt='n', xaxt='n')\ntext(x=train$x, y=train$group, labels=train$group, cex=0.7, pos=3)\n\n# Predict on new data.\nfit2 <- as.kcca(fit, data=train[,1:3])\n\n# Generate new colors.\nset.seed(Sys.time())\ntest <- generateColors(3)\n\ntest <- predictColor(fit2, centroids, test)\n\n# Plot the predictions.\nplot(x=test$x, y=test$y, col=test$hex, pch=19, cex=2, main='Colors', xlab='', ylab='2D Color', yaxt='n', xaxt='n')\n\n# Label the colors with their prediction.\ntext(x=test$x, y=test$y, labels=test$label, cex=0.7, pos=3)\n\n",
+    "created" : 1510582155448.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2121938094",
+    "id" : "E16F14C7",
+    "lastKnownWriteTime" : 1510589055,
+    "last_content_update" : 1510589055850,
+    "path" : "~/IT 7th sem/DWDM/assign/lab3/unsupervised-master/unsupervised-master/colors/colors.R",
+    "project_path" : "unsupervised-master/unsupervised-master/colors/colors.R",
+    "properties" : {
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

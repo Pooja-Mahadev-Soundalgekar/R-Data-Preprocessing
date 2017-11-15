@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "library(factoextra)\nlibrary(fpc)\nlibrary(dbscan)\ndata(\"iris\")\n\n# find optimal eps\nkNNdistplot(iris[,1:4],k = 5)\nabline(h=0.4,lty=2)\n\n# apply dbscan \nset.seed(123)\ndb<-fpc::dbscan(iris[,1:4],eps=0.4,MinPts = 4)\ndb<-dbscan::dbscan(iris[,1:4],eps = 0.4,minPts = 4)\n# dbscan package is faster than fpc in implementing dbscan(), \n# thus a better choice for large datasets\nprint(db)\nfviz_cluster(db,iris[,1:4],geom = \"point\")\n\n\n# Predict classes of flowers\nlibrary(caret)\nindex=createDataPartition(iris[,5],times = 2,p = 0.7)\n\ntrain<-iris[index$Resample1,1:4]\ntrain_target<-iris[index$Resample1,5]\ntest<-iris[-index$Resample2,1:4]\ntest_target<-iris[-index$Resample2,5]\n\ndb<-dbscan::dbscan(train,eps = 0.5,minPts = 3)\n# performance on train set\ntable(db$cluster,train_target)\n# performance on test set\nset.seed(123)\npred<-predict(db,test,data=train)\ntable(pred,test_target)\n\n# cluster 1 represents setosa\n# cluster 2 represents versicolor\n# cluster 3 represents virginica\n",
+    "created" : 1510577638807.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3045767314",
+    "id" : "46875988",
+    "lastKnownWriteTime" : 1510589058,
+    "last_content_update" : 1510589058213,
+    "path" : "~/IT 7th sem/DWDM/assign/lab3/lab.R",
+    "project_path" : "lab.R",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

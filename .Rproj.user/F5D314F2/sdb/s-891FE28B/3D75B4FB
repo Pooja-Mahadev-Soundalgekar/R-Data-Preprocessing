@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "library(RTextTools)\nlibrary(fpc)   \nlibrary(cluster)\nlibrary(tm)\nlibrary(stringi)\nlibrary(proxy)\nlibrary(wordcloud)\n\npath = \"C:/Users/Mounisha/Documents/IT 7th sem/DWDM/assign/lab3/corpus\"\ndir = DirSource(paste(path,\"/texts/\",sep=\"\"), encoding = \"UTF-8\")\n#corpus = Corpus(dir, readerControl=list(reader=readPDF))\ncorpus = Corpus(dir)\nsummary(corpus)\ncorpus <- tm_map(corpus,removePunctuation)\ncorpus <- tm_map(corpus,removeNumbers)\ncorpus <- tm_map(corpus,tolower)\ncorpus <- tm_map(corpus,removeWords,stopwords(\"english\"))\ncorpus <- tm_map(corpus,stripWhitespace)\nlibrary(SnowballC)\ncorpus <- tm_map(corpus, stemDocument)\ndtm<- DocumentTermMatrix(corpus)\ndtm\nsummary(corpus)\n\nwrite.csv((as.matrix(dtm)), \"test.csv\")\n#head(sort(as.matrix(dtm)[18,], decreasing = TRUE), n=15)\ndtm.matrix = as.matrix(dtm)\n#wordcloud(colnames(dtm.matrix), dtm.matrix[28, ], max.words = 20)\n\ninspect(dtm)\n\n\nm  <- as.matrix(dtm)\n# # # m <- m[1:2, 1:3]\n\n#print(distMatrix)\n#distMatrix <- dist(m, method=\"cosine\")\n#print(distMatrix)\n\ngroups <- hclust(distMatrix,method=\"ward.D\")\nplot(groups, cex=0.9, hang=-1)\nrect.hclust(groups, k=5)\n\n#distMatrix <- dist(m, method=\"euclidean\")\n#kfit <- kmeans(distMatrix, 2)   \n#clusplot(as.matrix(distMatrix), kfit$cluster, color=T, shade=T, labels=2, lines=0)  \n",
+    "created" : 1510583653304.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "836390806",
+    "id" : "3D75B4FB",
+    "lastKnownWriteTime" : 1510589053,
+    "last_content_update" : 1510589053013,
+    "path" : "~/IT 7th sem/DWDM/assign/lab3/Preprocess.R",
+    "project_path" : "Preprocess.R",
+    "properties" : {
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
